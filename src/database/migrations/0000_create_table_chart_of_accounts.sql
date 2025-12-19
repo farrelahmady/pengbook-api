@@ -1,7 +1,8 @@
 CREATE TYPE "public"."chart_of_account_type" AS ENUM('1', '2', '3', '4', '5', '6');--> statement-breakpoint
 CREATE TABLE "chart_of_accounts" (
-	"id" uuid DEFAULT gen_random_uuid() NOT NULL,
-	"parent_id" uuid,
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "chart_of_accounts_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"uid" uuid DEFAULT gen_random_uuid() NOT NULL,
+	"parent_id" bigint,
 	"description" varchar(100) NOT NULL,
 	"code" varchar(15) NOT NULL,
 	"level" integer NOT NULL,

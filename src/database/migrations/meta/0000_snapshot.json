@@ -1,5 +1,5 @@
 {
-  "id": "0c9d17a8-93fc-45fc-ad67-fb1eb2cd10ed",
+  "id": "ceee960b-f29d-48a0-9488-79b109734c7a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -10,6 +10,23 @@
       "columns": {
         "id": {
           "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "chart_of_accounts_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "9223372036854775807",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "uid": {
+          "name": "uid",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true,
@@ -17,7 +34,7 @@
         },
         "parent_id": {
           "name": "parent_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },

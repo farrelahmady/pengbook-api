@@ -15,12 +15,15 @@ export const chartOfAccounts = pgTable(
       .generatedAlwaysAsIdentity()
       .primaryKey()
       .notNull(),
-    uid: uuid('id').defaultRandom().notNull(),
+    uid: uuid('uid').defaultRandom().notNull(),
 
-    parentId: uuid('parent_id').references(() => chartOfAccounts.id, {
-      onDelete: 'cascade',
-      onUpdate: 'cascade',
-    }),
+    parentId: bigint('parent_id', { mode: 'number' }).references(
+      () => chartOfAccounts.id,
+      {
+        onDelete: 'cascade',
+        onUpdate: 'cascade',
+      },
+    ),
 
     description: varchar('description', { length: 100 }).notNull(),
 
