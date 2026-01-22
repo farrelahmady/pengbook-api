@@ -1,0 +1,47 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum AccountType {
+  ASSET
+  LIABILITY
+  EQUITY
+  INCOME
+  EXPENSE
+}
+
+model ChartOfAccount {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  type      AccountType
+  parentId  String?
+  parent    ChartOfAccount? @relation("CoaHierarchy", fields: [parentId], references: [id])
+  children  ChartOfAccount[] @relation("CoaHierarchy")
+  lines     JournalEntryLine[]
+  createdAt DateTime @default(now())
+}
+
+model JournalEntry {
+  id          String              @id @default(uuid())
+  date        DateTime
+  description String?
+  lines       JournalEntryLine[]
+  createdAt   DateTime @default(now())
+}
+
+model JournalEntryLine {
+  id              String        @id @default(uuid())
+  journalEntryId  String
+  accountId       String
+  debit           Decimal       @default(0)
+  credit          Decimal       @default(0)
+
+  journalEntry JournalEntry   @relation(fields: [journalEntryId], references: [id])
+  account      ChartOfAccount @relation(fields: [accountId], references: [id])
+}
