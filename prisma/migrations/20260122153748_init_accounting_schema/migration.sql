@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "AccountType" AS ENUM ('ASSET', 'LIABILITY', 'EQUITY', 'INCOME', 'EXPENSE');
+CREATE TYPE "AccountType" AS ENUM ('ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE', 'OTHER');
 
 -- CreateTable
 CREATE TABLE "ChartOfAccount" (
@@ -7,8 +7,10 @@ CREATE TABLE "ChartOfAccount" (
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" "AccountType" NOT NULL,
+    "isPosting" BOOLEAN NOT NULL DEFAULT false,
     "parentId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ChartOfAccount_pkey" PRIMARY KEY ("id")
 );
@@ -36,6 +38,9 @@ CREATE TABLE "JournalEntryLine" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChartOfAccount_code_key" ON "ChartOfAccount"("code");
+
+-- CreateIndex
+CREATE INDEX "ChartOfAccount_parentId_idx" ON "ChartOfAccount"("parentId");
 
 -- AddForeignKey
 ALTER TABLE "ChartOfAccount" ADD CONSTRAINT "ChartOfAccount_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "ChartOfAccount"("id") ON DELETE SET NULL ON UPDATE CASCADE;
