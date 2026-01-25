@@ -26,15 +26,23 @@ function resolveAccountType(code: string): AccountType {
 }
 
 function isPostingAccount(code: string): boolean {
-  const [, , c] = code.split('.');
-  return c !== '00';
+  const [, , , d] = code.split('.');
+  return d !== '00';
 }
 
 function getParentCode(code: string): string | null {
-  const [a, b, c] = code.split('.');
-  if (b === '00' && c === '00') return null;
-  if (c === '00') return `${a}.00.00`;
-  return `${a}.${b}.00`;
+  const [a, b, c, d] = code.split('.');
+
+  // Code 1.00.00.00 Then null
+  if (b === '00' && c === '00' && d === '00') return null;
+
+  // Code 1.01.00.00 Then 1.00.00.00
+  if (c === '00' && d === '00') return `${a}.00.00.00`;
+
+  // Code 1.01.01.00 Then 1.01.00.00
+  if (d === '00') return `${a}.${b}.00.00`;
+
+  return `${a}.${b}.${c}.00`;
 }
 
 export async function seedCOA() {
