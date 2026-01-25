@@ -11,7 +11,7 @@ import {
   Min,
 } from 'class-validator';
 
-class JournalLineDto {
+export class JournalLineDto {
   @IsUUID()
   accountId: string;
 

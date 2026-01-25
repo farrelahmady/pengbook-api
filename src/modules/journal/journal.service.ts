@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common';
 import { CreateJournalDto } from './dto/create-journal.dto';
 import { PrismaService } from '@/core/database/prisma/prisma.service';
 
@@ -11,8 +11,9 @@ export class JournalService {
     const totalCredit = dto.lines.reduce((sum, l) => sum + l.credit, 0);
 
     if (totalDebit !== totalCredit) {
-      throw new BadRequestException(
+      throw new HttpException(
         'Total debit harus sama dengan total credit',
+        400,
       );
     }
 
