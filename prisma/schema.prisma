@@ -24,14 +24,15 @@ model ChartOfAccount {
   isPosting Boolean  @default(false)
 
   parentId  String?
-  parent    ChartOfAccount?  @relation("CoaHierarchy", fields: [parentId], references: [id])
-  children  ChartOfAccount[] @relation("CoaHierarchy")
+  parent    ChartOfAccount?  @relation("chart_of_account_hierarchy", fields: [parentId], references: [id])
+  children  ChartOfAccount[] @relation("chart_of_account_hierarchy")
 
   lines     JournalEntryLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@map("chart_of_accounts")
   @@index([parentId])
 }
 
@@ -42,6 +43,9 @@ model JournalEntry {
   description String?
   lines       JournalEntryLine[]
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("journal_entries")
 }
 
 model JournalEntryLine {
@@ -53,4 +57,8 @@ model JournalEntryLine {
 
   journalEntry JournalEntry   @relation(fields: [journalEntryId], references: [id])
   account      ChartOfAccount @relation(fields: [accountId], references: [id])
+
+  @@index([accountId])
+  @@index([journalEntryId])
+  @@map("journal_entry_lines")
 }
