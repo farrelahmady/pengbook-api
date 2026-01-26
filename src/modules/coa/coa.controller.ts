@@ -1,7 +1,8 @@
 // src/modules/coa/coa.controller.ts
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { CoaService } from './coa.service';
 import { CreateCoaDto } from './dto/create-coa.dto';
+import { AccountQueryDto } from './dto/coa-query.dto';
 
 @Controller('coa')
 export class CoaController {
@@ -13,8 +14,8 @@ export class CoaController {
   }
 
   @Get()
-  findAll() {
-    return this.service.findAll();
+  findAll(@Query() query: AccountQueryDto) {
+    return this.service.findAll(query);
   }
 
   @Get('tree')

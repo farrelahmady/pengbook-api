@@ -2,6 +2,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateCoaDto } from './dto/create-coa.dto';
 import { PrismaService } from '@/core/database/prisma/prisma.service';
+import { AccountQueryDto } from './dto/coa-query.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class CoaService {
@@ -38,8 +40,13 @@ export class CoaService {
     });
   }
 
-  async findAll() {
+  async findAll(query: AccountQueryDto) {
     return this.prisma.chartOfAccount.findMany({
+      where: {
+        isPosting: query.posting,
+        type: query.type,
+        parentId: query.parentId,
+      },
       orderBy: { code: 'asc' },
     });
   }

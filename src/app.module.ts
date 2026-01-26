@@ -5,9 +5,10 @@ import { DatabaseModule } from './core/database/database.module';
 import { CoaModule } from './modules/coa/coa.module';
 import { LoggerModule } from './core/logging/logger.module';
 import { JournalModule } from './modules/journal/journal.module';
+import { CoreModule } from './core/core.module';
 
 @Module({
-  imports: [DatabaseModule, CoaModule, LoggerModule, JournalModule],
+  imports: [CoreModule, DatabaseModule, CoaModule, LoggerModule, JournalModule],
   controllers: [AppController],
   providers: [AppService],
 })

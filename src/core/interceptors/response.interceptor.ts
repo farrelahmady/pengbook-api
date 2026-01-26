@@ -13,7 +13,7 @@ export class ResponseInterceptor implements NestInterceptor {
       map((data) => ({
         success: true,
         message: 'OK',
-        data,
+        data: data === undefined ? null : data,
         meta: {
           timestamp: new Date().toISOString(),
         },

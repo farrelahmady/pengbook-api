@@ -17,43 +17,42 @@ enum AccountType {
 }
 
 model ChartOfAccount {
-  id        String   @id @default(uuid())
-  code      String   @unique
+  id        String      @id @default(uuid())
+  code      String      @unique
   name      String
   type      AccountType
-  isPosting Boolean  @default(false)
+  isPosting Boolean     @default(false)
 
-  parentId  String?
-  parent    ChartOfAccount?  @relation("chart_of_account_hierarchy", fields: [parentId], references: [id])
-  children  ChartOfAccount[] @relation("chart_of_account_hierarchy")
+  parentId String?
+  parent   ChartOfAccount?  @relation("chart_of_account_hierarchy", fields: [parentId], references: [id])
+  children ChartOfAccount[] @relation("chart_of_account_hierarchy")
 
-  lines     JournalEntryLine[]
+  lines JournalEntryLine[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("chart_of_accounts")
   @@index([parentId])
+  @@map("chart_of_accounts")
 }
 
-
 model JournalEntry {
-  id          String              @id @default(uuid())
+  id          String             @id @default(uuid())
   date        DateTime
   description String?
   lines       JournalEntryLine[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
 
   @@map("journal_entries")
 }
 
 model JournalEntryLine {
-  id              String        @id @default(uuid())
-  journalEntryId  String
-  accountId       String
-  debit           Decimal       @default(0)
-  credit          Decimal       @default(0)
+  id             String  @id @default(uuid())
+  journalEntryId String
+  accountId      String
+  debit          Decimal @default(0) @db.Decimal(18, 2)
+  credit         Decimal @default(0) @db.Decimal(18, 2)
 
   journalEntry JournalEntry   @relation(fields: [journalEntryId], references: [id])
   account      ChartOfAccount @relation(fields: [accountId], references: [id])
