@@ -4,14 +4,18 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Res,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { JournalService } from './journal.service';
-import { CreateJournalDto } from './dto/create-journal.dto';
 import type { Response } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  GetJournalScrollListRequestDto,
+  CreateJournalDto,
+} from './journal.dto';
 
 @Controller('journal')
 export class JournalController {
@@ -23,12 +27,17 @@ export class JournalController {
   }
 
   @Get()
-  findAll() {
-    return this.journalService.findAll();
+  findAll(@Query() query: GetJournalScrollListRequestDto) {
+    return this.journalService.findAll({
+      limit: query.limit ? parseInt(query.limit) : undefined,
+      cursor: query.cursor
+        ? JSON.parse(Buffer.from(query.cursor, 'base64').toString('utf-8'))
+        : undefined,
+    });
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: bigint) {
     return this.journalService.findById(id);
   }
 

@@ -1,5 +1,11 @@
 import { AccountType } from '@prisma/client';
-import { IsEnum, IsOptional, IsString, Length } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 
 export class CreateCoaDto {
   @IsString()
@@ -13,6 +19,6 @@ export class CreateCoaDto {
   type: AccountType;
 
   @IsOptional()
-  @IsString()
-  parentId?: string;
+  @IsNumber()
+  parentId?: bigint;
 }

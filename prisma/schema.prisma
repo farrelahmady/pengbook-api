@@ -17,13 +17,13 @@ enum AccountType {
 }
 
 model ChartOfAccount {
-  id        String      @id @default(uuid())
+  id        BigInt      @id @default(autoincrement())
   code      String      @unique
   name      String
   type      AccountType
   isPosting Boolean     @default(false)
 
-  parentId String?
+  parentId BigInt?
   parent   ChartOfAccount?  @relation("chart_of_account_hierarchy", fields: [parentId], references: [id])
   children ChartOfAccount[] @relation("chart_of_account_hierarchy")
 
@@ -37,20 +37,21 @@ model ChartOfAccount {
 }
 
 model JournalEntry {
-  id          String             @id @default(uuid())
+  id          BigInt             @id @default(autoincrement())
   date        DateTime
   description String?
   lines       JournalEntryLine[]
   createdAt   DateTime           @default(now())
   updatedAt   DateTime           @updatedAt
 
+  @@unique([date, id])
   @@map("journal_entries")
 }
 
 model JournalEntryLine {
-  id             String  @id @default(uuid())
-  journalEntryId String
-  accountId      String
+  id             BigInt  @id @default(autoincrement())
+  journalEntryId BigInt
+  accountId      BigInt
   debit          Decimal @default(0) @db.Decimal(18, 2)
   credit         Decimal @default(0) @db.Decimal(18, 2)
 

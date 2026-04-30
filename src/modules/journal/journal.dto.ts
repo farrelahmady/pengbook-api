@@ -2,18 +2,27 @@ import { Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
-  IsNotEmpty,
+  IsNumber,
+  IsNumberString,
   IsOptional,
   IsString,
-  ValidateNested,
-  IsUUID,
-  IsNumber,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
+export class GetJournalScrollListRequestDto {
+  @IsOptional()
+  @IsNumberString()
+  limit?: string;
+
+  @IsOptional()
+  @IsString()
+  cursor?: string;
+}
+
 export class JournalLineDto {
-  @IsUUID()
-  accountId: string;
+  @IsNumber()
+  accountId: bigint;
 
   @IsNumber()
   @Min(0)
@@ -36,4 +45,12 @@ export class CreateJournalDto {
   @ValidateNested({ each: true })
   @Type(() => JournalLineDto)
   lines: JournalLineDto[];
+}
+
+export interface RawJournalRow {
+  journalDate: Date;
+  description?: string;
+  accountCode: string;
+  debit: number;
+  credit: number;
 }

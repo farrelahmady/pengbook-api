@@ -1,5 +1,4 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { CreateJournalDto } from './dto/create-journal.dto';
 import { PrismaService } from '@/core/database/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { create, all } from 'mathjs';
@@ -7,7 +6,8 @@ import * as ExcelJS from 'exceljs';
 import { idrAccountingFormat } from '@/core/constants/excel-format.constant';
 import { parseExcelDate } from '@/core/utils/date.util';
 import { RequestContext } from '@/core/context/request-context';
-import { RawJournalRow } from './dto/import-journal.dto';
+import { JournalMapper } from './journal.mapper';
+import { CreateJournalDto, RawJournalRow } from './journal.dto';
 
 @Injectable()
 export class JournalService {
@@ -71,8 +71,28 @@ export class JournalService {
     });
   }
 
-  async findAll() {
-    return this.prisma.journalEntry.findMany({
+  async findAll({
+    limit = 10,
+    cursor,
+  }: {
+    limit?: number;
+    cursor?: { date: Date; id: bigint };
+  } = {}) {
+    const data = await this.prisma.journalEntry.findMany({
+      take: limit + 1,
+      orderBy: [
+        { date: 'desc' },
+        { id: 'desc' }, // tie breaker
+      ],
+      ...(cursor && {
+        cursor: {
+          date_id: {
+            date: cursor.date,
+            id: cursor.id,
+          },
+        },
+        skip: 1,
+      }),
       include: {
         lines: {
           include: {
@@ -80,13 +100,28 @@ export class JournalService {
           },
         },
       },
-      orderBy: {
-        date: 'desc',
-      },
     });
+
+    const hasNextPage = data.length > limit;
+
+    const items = hasNextPage ? data.slice(0, limit) : data;
+
+    const nextCursor = hasNextPage
+      ? btoa(
+          JSON.stringify({
+            date: items[items.length - 1].date,
+            id: items[items.length - 1].id,
+          }),
+        )
+      : null;
+
+    return {
+      items: JournalMapper.toGroupByDateList(items),
+      nextCursor,
+    };
   }
 
-  async findById(id: string) {
+  async findById(id: bigint) {
     return this.prisma.journalEntry.findUnique({
       where: { id },
       include: {

@@ -3,12 +3,12 @@ CREATE TYPE "AccountType" AS ENUM ('ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'E
 
 -- CreateTable
 CREATE TABLE "chart_of_accounts" (
-    "id" TEXT NOT NULL,
+    "id" BIGSERIAL NOT NULL,
     "code" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "type" "AccountType" NOT NULL,
     "isPosting" BOOLEAN NOT NULL DEFAULT false,
-    "parentId" TEXT,
+    "parentId" BIGINT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -17,7 +17,7 @@ CREATE TABLE "chart_of_accounts" (
 
 -- CreateTable
 CREATE TABLE "journal_entries" (
-    "id" TEXT NOT NULL,
+    "id" BIGSERIAL NOT NULL,
     "date" TIMESTAMP(3) NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -28,11 +28,11 @@ CREATE TABLE "journal_entries" (
 
 -- CreateTable
 CREATE TABLE "journal_entry_lines" (
-    "id" TEXT NOT NULL,
-    "journalEntryId" TEXT NOT NULL,
-    "accountId" TEXT NOT NULL,
-    "debit" DECIMAL(65,30) NOT NULL DEFAULT 0,
-    "credit" DECIMAL(65,30) NOT NULL DEFAULT 0,
+    "id" BIGSERIAL NOT NULL,
+    "journalEntryId" BIGINT NOT NULL,
+    "accountId" BIGINT NOT NULL,
+    "debit" DECIMAL(18,2) NOT NULL DEFAULT 0,
+    "credit" DECIMAL(18,2) NOT NULL DEFAULT 0,
 
     CONSTRAINT "journal_entry_lines_pkey" PRIMARY KEY ("id")
 );
@@ -42,6 +42,9 @@ CREATE UNIQUE INDEX "chart_of_accounts_code_key" ON "chart_of_accounts"("code");
 
 -- CreateIndex
 CREATE INDEX "chart_of_accounts_parentId_idx" ON "chart_of_accounts"("parentId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "journal_entries_date_id_key" ON "journal_entries"("date", "id");
 
 -- CreateIndex
 CREATE INDEX "journal_entry_lines_accountId_idx" ON "journal_entry_lines"("accountId");

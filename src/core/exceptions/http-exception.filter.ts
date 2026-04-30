@@ -20,6 +20,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       message: (exception as Error).message,
     };
 
+    console.error(exception);
+
     if (exception instanceof HttpException) {
       status = exception.getStatus();
       const res = exception.getResponse() as any;

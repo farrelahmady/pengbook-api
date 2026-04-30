@@ -13,5 +13,5 @@ export class AccountQueryDto {
   type?: AccountType;
 
   @IsOptional()
-  parentId?: string;
+  parentId?: bigint;
 }

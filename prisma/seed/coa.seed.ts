@@ -46,12 +46,19 @@ function getParentCode(code: string): string | null {
 }
 
 export async function seedCOA() {
-  const codeToId = new Map<string, string>();
+  const codeToId = new Map<string, bigint>();
 
   // STEP 1 — insert without parent
   for (const coa of COA_DATA) {
-    const record = await prisma.chartOfAccount.create({
-      data: {
+    const record = await prisma.chartOfAccount.upsert({
+      where: { code: coa.code },
+      update: {
+        code: coa.code,
+        name: coa.name,
+        type: resolveAccountType(coa.code),
+        isPosting: isPostingAccount(coa.code),
+      },
+      create: {
         code: coa.code,
         name: coa.name,
         type: resolveAccountType(coa.code),

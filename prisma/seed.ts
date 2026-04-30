@@ -1,7 +1,9 @@
 import { seedCOA } from './seed/coa.seed';
+import { seedJournal } from './seed/journal.seed';
 
 async function main() {
   await seedCOA();
+  await seedJournal(20);
 }
 
 main()
