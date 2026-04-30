@@ -1,4 +1,4 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import {
   IsArray,
   IsDateString,
@@ -13,11 +13,20 @@ import {
 export class GetJournalScrollListRequestDto {
   @IsOptional()
   @IsNumberString()
-  limit?: string;
+  @Transform(({ value }) => parseInt(value))
+  limit?: number;
 
   @IsOptional()
   @IsString()
   cursor?: string;
+
+  @IsOptional()
+  @IsDateString()
+  startDate?: Date;
+
+  @IsOptional()
+  @IsDateString()
+  endDate?: Date;
 }
 
 export class JournalLineDto {

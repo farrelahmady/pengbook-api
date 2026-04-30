@@ -28,12 +28,7 @@ export class JournalController {
 
   @Get()
   findAll(@Query() query: GetJournalScrollListRequestDto) {
-    return this.journalService.findAll({
-      limit: query.limit ? parseInt(query.limit) : undefined,
-      cursor: query.cursor
-        ? JSON.parse(Buffer.from(query.cursor, 'base64').toString('utf-8'))
-        : undefined,
-    });
+    return this.journalService.findAll(query);
   }
 
   @Get(':id')

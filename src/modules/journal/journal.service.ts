@@ -7,7 +7,11 @@ import { idrAccountingFormat } from '@/core/constants/excel-format.constant';
 import { parseExcelDate } from '@/core/utils/date.util';
 import { RequestContext } from '@/core/context/request-context';
 import { JournalMapper } from './journal.mapper';
-import { CreateJournalDto, RawJournalRow } from './journal.dto';
+import {
+  CreateJournalDto,
+  GetJournalScrollListRequestDto,
+  RawJournalRow,
+} from './journal.dto';
 
 @Injectable()
 export class JournalService {
@@ -71,13 +75,13 @@ export class JournalService {
     });
   }
 
-  async findAll({
-    limit = 10,
-    cursor,
-  }: {
-    limit?: number;
-    cursor?: { date: Date; id: bigint };
-  } = {}) {
+  async findAll(req: GetJournalScrollListRequestDto) {
+    const limit = req.limit ?? 10;
+
+    const cursor: { date: Date; id: bigint } = req.cursor
+      ? JSON.parse(Buffer.from(req.cursor, 'base64').toString('utf-8'))
+      : null;
+
     const data = await this.prisma.journalEntry.findMany({
       take: limit + 1,
       orderBy: [
